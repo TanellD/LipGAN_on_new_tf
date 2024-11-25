@@ -1,116 +1,87 @@
-LipGAN
-===================
-*Generate realistic talking faces for any human speech and face identity.*
+# LipGAN: Updated Version for Compatibility with TensorFlow
 
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/towards-automatic-face-to-face-translation/talking-face-generation-on-lrw)](https://paperswithcode.com/sota/talking-face-generation-on-lrw?p=towards-automatic-face-to-face-translation)
+This repository is a refactored and updated version of the **LipGAN** project, which generates realistic talking faces for any human speech and face identity. The main goal of the update is to improve compatibility with newer versions of TensorFlow, ensuring that the model runs smoothly on current frameworks while preserving the functionality of generating accurate lip synchronization for talking faces.
 
-[[Paper]](https://dl.acm.org/doi/10.1145/3343031.3351066) | [[Project Page]](http://cvit.iiit.ac.in/research/projects/cvit-projects/facetoface-translation)  | [[Demonstration Video]](https://www.youtube.com/watch?v=aHG6Oei8jF0&list=LL2W0lqk_iPaqSlgPZ9GNv6w)
+### Project Overview
 
-![image](https://drive.google.com/uc?export=view&id=1Y2isqWhUmAeYhbwK54tIqYOX0Pb5oH9w)
+LipGAN synthesizes correct lip motion on a given face in sync with an audio file. This updated version continues to focus on investigating the power of GAN architectures and exploring their ability to improve the quality of face-to-face translation, particularly for applications where lip-sync accuracy is essential, such as in dubbing and face generation tasks.
 
-# Important Update:
-A new, improved work that can produce significantly more accurate and natural results is available here: https://github.com/Rudrabha/Wav2Lip
+**New Features:**
+- Compatibility with the latest TensorFlow versions.
+- Better memory usage.
 
+For the original repository, you can visit the [LipGAN GitHub page](https://github.com/Rudrabha/LipGAN).
 
-----------
- Features
----------
- - Can handle in-the-wild face poses and expressions.
- - Can handle speech in any language and is robust to background noise.
- - Paste faces back into the original video with minimal/no artefacts --- can potentially correct lip sync errors in dubbed movies! 
- - Complete multi-gpu training code, pre-trained models available.
- - Fast inference code to generate results from the pre-trained models
+### Key Features
+- **Realistic Lip Sync:** Correct lip motion for any speech, applicable to both still images and video footage.
+- **Wide Pose Handling:** Works with diverse face poses and expressions.
+- **Multilingual:** Handles speech in any language and is robust to background noise.
+- **Minimal Artifacts:** Paste faces back into the original video with minimal artifacts, correcting lip-sync errors.
+- **Efficient Inference:** Fast inference for generating results from pre-trained models.
+- **Multi-GPU Training:** Full multi-GPU training code to speed up training for large datasets.
 
-Prerequisites
--------------
-- Python >= 3.5
-- ffmpeg: `sudo apt-get install ffmpeg`
-- Install necessary packages using `pip install -r requirements.txt`
-- Install keras-contrib `pip install git+https://www.github.com/keras-team/keras-contrib.git`
-- git clone `https://github.com/Rudrabha/LipGAN.git` (make sure to check out to branch `fully_pythonic`)
+### Updated Instructions for Compatibility
 
-Alternatively, if you would like to try it on Google Colab, please refer to this [notebook](https://colab.research.google.com/drive/1NLUwupCBsB1HrpEmOIHeMgU63sus2LxP) [Credits: [Kirill](https://github.com/KirillR911)]
+#### Prerequisites
+- **Python >= 3.5**
+- **ffmpeg**: Install via `sudo apt-get install ffmpeg`.
+- Install dependencies: 
+  ```bash
+  pip install -r requirements.txt
+  ```
+- Install `keras-contrib`:
+  ```bash
+  pip install git+https://www.github.com/keras-team/keras-contrib.git
+  ```
 
-Getting the weights
-----------
-Download checkpoints of the folowing models into the `logs/` folder
+#### Model Weights
+You can download the necessary model checkpoints from the following links:
+- **Face detection (dlib)**: [Download Link](http://dlib.net/files/mmod_human_face_detector.dat.bz2)
+- **LipGAN Pre-trained Model**: [Google Drive Link](https://drive.google.com/file/d/1DtXY5Ei_V6QjrLwfe7YDrmbSCDu6iru1/view?usp=sharing)
 
-- CNN Face detection using dlib: [Link](http://dlib.net/files/mmod_human_face_detector.dat.bz2)
-- LipGAN [Google Drive](https://drive.google.com/file/d/1DtXY5Ei_V6QjrLwfe7YDrmbSCDu6iru1/view?usp=sharing)
+#### Usage
 
-Generating talking face videos using pretrained models (Inference)
--------
-
-#### Usage #1: Generating correct lip motion on a random talking face video
-Here, we are given an audio input and a video of an identity speaking something entirely different. LipGAN can synthesize the correct lip motion for the given audio and overlay it on the given video of the speaking identity (Example #1, #2 in the above image).
-
+##### 1. Generate Lip-Synced Video
+To generate a video with synced lips based on an audio file:
 ```bash
 python batch_inference.py --checkpoint_path <saved_checkpoint> --model residual --face <random_input_video> --fps <fps_of_input_video> --audio <guiding_audio_wav_file> --results_dir <folder_to_save_generated_video>
 ```
+Ensure that the **FPS** value matches the input video’s frame rate for accurate results.
 
-The generated `result_voice.mp4` will contain the input video lip synced with the given input audio. Note that the FPS parameter is by default `25`, **make sure you set the FPS correctly for your own input video**.
-
-#### Usage #2: Generating talking video from a single face image
-Refer to example #3 in the above picture. Given an audio, LipGAN generates a correct mouth shape (viseme) at each time-step and overlays it on the input image. The sequence of generated mouth shapes yields a talking face video.
+##### 2. Generate Talking Face from a Single Image
+If you have a single image of a face and want to generate a talking face synced with an audio clip:
 ```bash
 python batch_inference.py --checkpoint_path <saved_checkpoint> --model residual --face <random_input_face> --audio <guiding_audio_wav_file> --results_dir <folder_to_save_generated_video>
 ```
-**Please use the --pads argument to correct for inaccurate face detections such as not covering the chin region correctly. This can improve the results further.** 
-#### More options
-```bash
-python batch_inference.py --help
-```
-Training LipGAN
--------
-We illustrate the training pipeline using the LRS2 dataset. Adapting for other datasets would involve small modifications to the code. 
+Use the `--pads` argument to improve face detection accuracy, especially in the chin region.
 
-###### LRS2 dataset folder structure
-```
-data_root (mvlrs_v1)
-├── main, pretrain (we use only main folder in this work)
-|	├── list of folders
-|	│   ├── five-digit numbered video IDs ending with (.mp4)
-```
+#### Training LipGAN
 
-### Preprocess the dataset
-We use Python [Librosa](https://librosa.github.io/librosa/) library to save melspectrogram features and perform face detection using dlib.  
+To train LipGAN on your dataset, follow these steps:
 
-```bash
-# Please copy the appropriate LRS2 split's filelist.txt to the filelists/ folder. Example below is shown for LRS2. 
-python preprocess.py --split [train|pretrain|val] --videos_data_root mvlrs_v1/ --final_data_root <folder_to_store_preprocessed_files>
+1. **Preprocess the dataset** (e.g., LRS2 dataset):
+   ```bash
+   python preprocess.py --split [train|pretrain|val] --videos_data_root mvlrs_v1/ --final_data_root <folder_to_store_preprocessed_files>
+   ```
 
-### More options while preprocessing (like number of workers, image size etc.)
-python preprocess.py --help
-```
-###### Final preprocessed folder structure
-```
-data_root (mvlrs_v1)
-├── main, pretrain (we use only main folder in this work)
-|	├── list of folders
-|	│   ├── folders with five-digit video IDs 
-|	│   |	 ├── 0.jpg, 1.jpg .... (extracted face crops of each frame)
-|	│   |	 ├── mels.npz, audio.wav (melspectrogram and raw audio of the whole video)
-```
+2. **Train the generator** (for quicker results):
+   ```bash
+   python train_unet.py --data_root <path_to_preprocessed_dataset>
+   ```
 
-#### Train the generator only
-As training LipGAN is computationally intensive, you can just train the generator alone for quick, decent results.  
-```bash
-python train_unet.py --data_root <path_to_preprocessed_dataset>
+3. **Train the full LipGAN model**:
+   ```bash
+   python train.py --data_root <path_to_preprocessed_dataset>
+   ```
 
-### Extensive set of training options available. Please run and refer to:
-python train_unet.py --help
-```
-#### Train LipGAN
-```bash
-python train.py --data_root <path_to_preprocessed_dataset>
+### Acknowledgements
+- **DeepVoice 3**: Part of the audio preprocessing code is derived from the [DeepVoice 3 implementation](https://github.com/r9y9/deepvoice3_pytorch), and we thank the authors for releasing their code.
+  
+### License
+The software is licensed under the MIT License.
 
-### Extensive set of training options available. Please run and refer to:
-python train.py --help
-```
-
-License and Citation
-----------
-The software is licensed under the MIT License. Please cite the following paper if you have use this code:
+### Citation
+If you use this code in your research, please cite the following paper of the original authors:
 
 ```
 @inproceedings{KR:2019:TAF:3343031.3351066,
@@ -121,7 +92,7 @@ The software is licensed under the MIT License. Please cite the following paper 
   year = {2019},
   isbn = {978-1-4503-6889-6},
   location = {Nice, France},
-   = {1428--1436},
+  pages = {1428--1436},
   numpages = {9},
   url = {http://doi.acm.org/10.1145/3343031.3351066},
   doi = {10.1145/3343031.3351066},
@@ -132,8 +103,5 @@ The software is licensed under the MIT License. Please cite the following paper 
 }
 ```
 
-
-Acknowledgements
-----------
-Part of the audio preprocessing code is taken from the [DeepVoice 3](https://github.com/r9y9/deepvoice3_pytorch) implementation. We thank the author for releasing their code.
-
+### Conclusion
+This updated version of LipGAN ensures compatibility with newer TensorFlow versions while maintaining its powerful ability to generate realistic talking faces. It allows for more accurate lip-syncing, better handling of various face poses and expressions, and supports a wider range of use cases.

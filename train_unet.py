@@ -151,26 +151,7 @@ class WeightsSaver(Callback):
 			self.model.save_weights(self.weight_path)
 
 callbacks_list = [WeightsSaver(args.checkpoint_freq, path.join(args.logdir, args.checkpoint_name))]
-# len(args.all_images) // args.batch_size
 
-# def create_tf_dataset(args):
-#     dataset = tf.data.Dataset.from_generator(
-#         lambda: datagen(args),
-#         output_signature=(
-#             (tf.TensorSpec(shape=[args.batch_size, args.img_size, args.img_size, 6], dtype=tf.float32),  # img_ip_batch + img_gt_batch_masked
-#              tf.TensorSpec(shape=[args.batch_size, 80, args.mel_step_size, 1], dtype=tf.float32)),  # mel_batch
-#             tf.TensorSpec(shape=[args.batch_size, args.img_size, args.img_size, 3], dtype=tf.float32)  # img_gt_batch
-#         )
-#     )
-#     return dataset
-# print(batch_size)
-
-# dataset = create_tf_dataset(args)
-
-# model.fit(dataset.take(1900), epochs=2, steps_per_epoch=1900)
-
-
-# # for (a, b), c in
 def generator_fn(all_images, batch_size, img_size, mel_step_size):
     data_gen = DataGenerator(all_images, batch_size, img_size, mel_step_size)
     for data in data_gen:

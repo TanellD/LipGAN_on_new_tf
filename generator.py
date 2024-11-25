@@ -285,32 +285,6 @@ def create_model_residual(args, mel_step_size):
 	model.compile(loss='mae', optimizer=(Adam(learning_rate=args.lr) if hasattr(args, 'lr') else 'adam')) 
 	return model
 
-# def create_combined_model(generator, discriminator, args, mel_step_size):
-
-# 	gan = GAN(discriminator=discriminator, generator=generator, latent_dim=latent_dim)
-# 	gan.compile(
-# 		d_optimizer=keras.optimizers.Adam(learning_rate=0.0003),
-# 		g_optimizer=keras.optimizers.Adam(learning_rate=0.0003),
-# 		loss_fn=keras.losses.BinaryCrossentropy(from_logits=True),
-# 	)
-# 	input_face = Input(shape=(args.img_size, args.img_size, 6), name="input_face_comb")
-# 	input_audio = Input(shape=(80, mel_step_size, 1), name="input_audio_comb")
-
-# 	fake_face = generator([input_face, input_audio])
-# 	print("1discriminator", discriminator._loss_tracker)
-# 	discriminator.trainable = False
-# 	print("2discriminator", discriminator._loss_tracker)
-# 	d = discriminator([fake_face, input_audio])
-# 	print("type d", type(d))
-# 	print(d[:10])
-# 	model = Model([input_face, input_audio], [fake_face, d])
-# 	print("3discriminator", discriminator._loss_tracker)
-# 	model.compile(loss=['mae', 'mae'], 
-# 					optimizer=Adam(learning_rate=0.001), 
-# 					loss_weights=[1., .01])
-# 	print("4discriminator", discriminator._loss_tracker)
-# 	return model
-
 
 def create_combined_model(generator, discriminator, args, mel_step_size):
 
