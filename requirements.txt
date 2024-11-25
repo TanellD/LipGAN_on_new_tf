@@ -1,0 +1,12 @@
+dlib
+h5py
+Keras
+matplotlib
+numpy
+opencv-python
+Pillow
+scikit-image
+scipy
+tensorflow
+tqdm
+librosa==0.9.1
